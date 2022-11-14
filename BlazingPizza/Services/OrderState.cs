@@ -32,4 +32,9 @@ public class OrderState
         Order.Pizzas.Add(ConfiguringPizza);
         Reset();
     }
+
+    public void RemoveConfiguredPizza(Pizza pizza)
+    {
+        Order.Pizzas.Remove(pizza);
+    }
 }
