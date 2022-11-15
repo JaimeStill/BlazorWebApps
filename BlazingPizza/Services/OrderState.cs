@@ -6,10 +6,15 @@ public class OrderState
     public Pizza ConfiguringPizza { get; private set; }
     public Order Order { get; private set; } = new Order();
 
-    private void Reset()
+    public void ResetConfig()
     {
         ConfiguringPizza = null;
         ShowingConfigureDialog = false;
+    }
+
+    public void ResetOrder()
+    {
+        Order = new Order();
     }
 
     public void ShowConfigurePizzaDialog(PizzaSpecial special)
@@ -25,12 +30,10 @@ public class OrderState
         ShowingConfigureDialog = true;
     }
 
-    public void CancelConfigurePizzaDialog() => Reset();
-
     public void ConfirmConfigurePizzaDialog()
     {
         Order.Pizzas.Add(ConfiguringPizza);
-        Reset();
+        ResetConfig();
     }
 
     public void RemoveConfiguredPizza(Pizza pizza)
