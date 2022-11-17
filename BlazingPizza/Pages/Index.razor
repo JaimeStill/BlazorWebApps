@@ -85,25 +85,11 @@
 
     protected override async Task OnInitializedAsync()
     {
-        @*
-            Commented until the following issue is resolved:
-            https://github.com/dotnet/aspnetcore/issues/45081
-        *@
-
         try
         {
-
             specials = await HttpClient.GetFromJsonAsync<List<PizzaSpecial>>(
-                "http://localhost:5000/specials"
-            );
-
-            @* specials = await HttpClient.GetFromJsonAsync<List<PizzaSpecial>>(
                 $"{NavigationManager.BaseUri}specials"
-            ); *@
-
-            @* specials = await HttpClient.GetFromJsonAsync<List<PizzaSpecial>>(
-                "https://jaimestill-literate-space-waffle-v6qgjjj56rvcw596-5000.preview.app.github.dev/specials"
-            ); *@
+            );
         }
         catch (Exception ex)
         {

@@ -4,8 +4,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BlazingPizza.Controllers;
 
-
-[Route("[controller]")]
+[Route("orders")]
+[ApiController]
 public class OrdersController : Controller
 {
     private readonly PizzaStoreContext _db;
@@ -16,19 +16,42 @@ public class OrdersController : Controller
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<OrderWithStatus>>> GetOrders()
+    public async Task<IActionResult> GetOrders()
     {
         var orders = await _db.Orders
- 	        .Include(o => o.Pizzas).ThenInclude(p => p.Special)
- 	        .Include(o => o.Pizzas).ThenInclude(p => p.Toppings).ThenInclude(t => t.Topping)
+ 	        .Include(o => o.Pizzas)
+                .ThenInclude(p => p.Special)
+ 	        .Include(o => o.Pizzas)
+                .ThenInclude(p => p.Toppings)
+                    .ThenInclude(t => t.Topping)
+            .AsSplitQuery()
  	        .OrderByDescending(o => o.CreatedTime)
  	        .ToListAsync();
 
-        return orders.Select(o => OrderWithStatus.FromOrder(o)).ToList();
+        return Ok(orders.Select(o => OrderWithStatus.FromOrder(o)).ToList());
     }
 
-    [HttpPost("[action]")]
-    public async Task<ActionResult<int>> PlaceOrder(Order order)
+    [HttpGet("{orderId:int}")]
+    public async Task<IActionResult> GetOrderWithStatus(int orderId)
+    {
+        var order = await _db.Orders
+            .Where(o => o.OrderId == orderId)
+            .Include(o => o.Pizzas)
+                .ThenInclude(p => p.Special)
+            .Include(o => o.Pizzas)
+                .ThenInclude(p => p.Toppings)
+                    .ThenInclude(t => t.Topping)
+            .AsSplitQuery()
+            .SingleOrDefaultAsync();
+
+        if (order == null)
+            return NotFound();
+
+        return Ok(OrderWithStatus.FromOrder(order));
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> PlaceOrder(Order order)
     {
         order.CreatedTime = DateTime.Now;
 
@@ -44,6 +67,6 @@ public class OrdersController : Controller
         _db.Orders.Attach(order);
         await _db.SaveChangesAsync();
 
-        return order.OrderId;
+        return Ok(order.OrderId);
     }
 }
