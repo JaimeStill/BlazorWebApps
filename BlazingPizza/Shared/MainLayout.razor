@@ -1,6 +1,28 @@
 @inherits LayoutComponentBase
 
-<div class="content">
-    @Body
-</div>
+<div id="app">
+    <header class="top-bar">
+        <a href=""
+           class="logo">
+            <img src="img/logo.svg" alt="Blazing Pizzas">
+        </a>
 
+        <NavLink class="nav-tab" href="" Match="NavLinkMatch.All">
+            <img src="img/pizza-slice.svg" alt="pizza-slice">
+            <div>Get Pizza</div>
+        </NavLink>
+
+        <NavLink class="nav-tab" href="myorders">
+            <img src="img/bike.svg">
+            <div>My Orders</div>
+        </NavLink>
+    </header>
+
+    <div class="content">
+        @Body
+    </div>
+
+    <footer>
+        &copy; Blazing Pizza @DateTime.UtcNow.Year
+    </footer>
+</div>
